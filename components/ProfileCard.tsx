@@ -10,7 +10,6 @@ const ProfileCard = () => {
   const router = useRouter();
   const { data: session } = useSession();
   return (
-    <section className='w-full max-w-full flex flex-col flex-start'>
       <div className='glassmorphism max-w-2xl flex justify-between items-center gap-2'>
         {/* Profile Picture */}
         <div>
@@ -22,7 +21,6 @@ const ProfileCard = () => {
           <div className='text-sm text-gray-500 font-medium'>{session?.user?.email ? session?.user?.email : "testing@testing.com"}</div>
         </div>
       </div>
-    </section>
   )
 }
 

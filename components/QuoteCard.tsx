@@ -6,9 +6,9 @@ import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
   post: any; // FIXME: type
-  handleTagClick: (tag: string) => void;
-  handleEdit?: (id: string) => void;
-  handleDelete?: (id: string) => void;
+  handleTagClick: React.MouseEventHandler<HTMLParagraphElement>
+  handleEdit?: React.MouseEventHandler<HTMLButtonElement>;
+  handleDelete?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 const QuoteCard = ({
@@ -17,13 +17,12 @@ const QuoteCard = ({
   handleEdit,
   handleDelete,
 }: Props) => {
+  const { data : session } = useSession();
   const [copied, setCopied] = useState<String | Boolean>("");
-  const handleCopy = (e:Event) => {
-    const handleCopy = () => {
-      setCopied(post.prompt);
-      navigator.clipboard.writeText(post.prompt);
-      setTimeout(() => setCopied(false), 3000);
-    };
+  const handleCopy: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    setCopied(post.prompt);
+    navigator.clipboard.writeText(post.prompt);
+    setTimeout(() => setCopied(false), 3000);
   }
 
   useEffect(() => {
@@ -65,6 +64,10 @@ const QuoteCard = ({
       <p className="my-4 font-satoshi text-sm text-gray-700">{post.quote}</p>
       <p>{post.author}</p>
       <p className="font-inter text-sm blue_gradient cursor-pointer" onClick={handleTagClick}>#{post.tag}</p>
+      {session && session?.user && <div className="w-full flex justify-between">
+        <button onClick={handleEdit}>Edit</button>
+        <button onClick={handleDelete}>Delete</button>
+      </div>}
     </div>
   );
 };
