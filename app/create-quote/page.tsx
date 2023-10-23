@@ -32,7 +32,7 @@ export default function CreateQuote() {
     try {
       const response = await axios.post('/api/quote/new', {
         ...post, 
-        userId: session?.user.id
+        userId: session?.user?.id
       });
 
       if (response.status === 201) {

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
@@ -17,7 +17,21 @@ const QuoteCard = ({
   handleEdit,
   handleDelete,
 }: Props) => {
-  const [copied, setCopied] = useState("");
+  const [copied, setCopied] = useState<String | Boolean>("");
+  const handleCopy = (e:Event) => {
+    const handleCopy = () => {
+      setCopied(post.prompt);
+      navigator.clipboard.writeText(post.prompt);
+      setTimeout(() => setCopied(false), 3000);
+    };
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCopied("");
+    }, 5000);
+  }, [copied]);
+
   return (
     <div className="prompt_card ">
       <div className="flex justify-between items-start gap-5">
@@ -39,7 +53,7 @@ const QuoteCard = ({
           </div>
         </div>
 
-        <div className="copy_btn" onClick={() => {}}>
+        <div className="copy_btn" onClick={handleCopy}>
           <Image 
             src={copied === post.quote ? '/assets/icons/tick.svg' : '/assets/icons/copy.svg'}
             alt="copy icon"
@@ -50,7 +64,7 @@ const QuoteCard = ({
       </div>
       <p className="my-4 font-satoshi text-sm text-gray-700">{post.quote}</p>
       <p>{post.author}</p>
-      <p className="font-inter text-sm blue_gradient cursor-pointer">#{post.tag}</p>
+      <p className="font-inter text-sm blue_gradient cursor-pointer" onClick={handleTagClick}>#{post.tag}</p>
     </div>
   );
 };
