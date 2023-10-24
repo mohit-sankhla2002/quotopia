@@ -4,7 +4,7 @@ export async function GET(request: Request) {
     let userId = request.url.split("/")[request.url.split("/").length - 1];
     try {
         await connectToDb();
-        const quotes = await Quote.find({ creator: userId });
+        const quotes = await Quote.find({ creator: userId }).populate('creator');
         if (quotes.length === 0) {
             return new Response(JSON.stringify({
                 message: "No quotes are made by this user"
