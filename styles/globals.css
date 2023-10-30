@@ -163,3 +163,4 @@ Note: The styles for this gradient grid background is heavily inspired by the cr
 .flex-between {
     @apply flex justify-between items-center;
 }
+

@@ -3,25 +3,28 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
+import Loading from '@/components/Loading';
+import axios from "axios";
+import toast from "react-hot-toast";
 
 type Props = {
   post: any; // FIXME: type
   handleTagClick: React.MouseEventHandler<HTMLParagraphElement>
-  handleEdit?: React.MouseEventHandler<HTMLButtonElement>;
-  handleDelete?: React.MouseEventHandler<HTMLButtonElement>;
+  setPosts: any
 };
 
 const QuoteCard = ({
   post,
   handleTagClick,
-  handleEdit,
-  handleDelete,
+  setPosts,
 }: Props) => {
-  const { data : session } = useSession();
+  const { data : session, status } = useSession();
+  const pathname = usePathname();
+  const endingPathname = pathname.split("/")[pathname.split("/").length - 1];
   const [copied, setCopied] = useState<String | Boolean>("");
-  const handleCopy: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    setCopied(post.prompt);
-    navigator.clipboard.writeText(post.prompt);
+  const handleCopy: React.MouseEventHandler<HTMLDivElement> = async (e) => {
+    setCopied(post.quote);
+    await navigator.clipboard.writeText(post.quote);
     setTimeout(() => setCopied(false), 3000);
   }
 
@@ -30,6 +33,32 @@ const QuoteCard = ({
       setCopied("");
     }, 5000);
   }, [copied]);
+
+  const handleDelete = async () => {
+    console.log(post._id);
+    const promise = new Promise((resolve, reject) => {
+      axios.delete(`/api/quote/delete/${post._id}`).then((response) => {
+        resolve(response.data);
+        setPosts((prev: any) => (prev.filter((quote: any) => quote._id != post._id)))
+      }).catch((err) => {
+        reject(err);
+      })
+    });
+
+    toast.promise(promise, {
+      loading: "Deleting...",
+      success: "Deleted successfully",
+      error: "Something went wrong",
+    });
+  }
+
+  const handleEdit = () => {
+    console.log(post._id);
+  }
+
+  if (status === 'loading') {
+    return <Loading />
+  }
 
   return (
     <div className="prompt_card ">
@@ -53,21 +82,46 @@ const QuoteCard = ({
         </div>
 
         <div className="copy_btn" onClick={handleCopy}>
-          <Image 
-            src={copied === post.quote ? '/assets/icons/tick.svg' : '/assets/icons/copy.svg'}
+          <Image
+            src={
+              copied === post.quote
+                ? "/assets/icons/tick.svg"
+                : "/assets/icons/copy.svg"
+            }
             alt="copy icon"
             width={12}
             height={12}
           />
         </div>
       </div>
-      <p className="my-4 font-satoshi text-sm text-gray-700">{post.quote}</p>
-      <p>{post.author}</p>
-      <p className="font-inter text-sm blue_gradient cursor-pointer" onClick={handleTagClick}>#{post.tag}</p>
-      {session && session?.user && <div className="w-full flex justify-between">
-        <button onClick={handleEdit}>Edit</button>
-        <button onClick={handleDelete}>Delete</button>
-      </div>}
+      <p className="my-4 font-satoshi text-lg font-semibold text-gray-700 overflow-x-scroll h-[40px]">
+        "{post.quote}"
+      </p>
+      <p className="text-sm text-center font-light uppercase">~By {post.author}</p>
+      {/* <p className="text-sm font-light">
+        Tag:{" "}
+        <span
+          className="font-normal bg-blue-400 py-1 px-3 rounded-full hover:text-white cursor-pointer hover:bg-blue-500"
+          onClick={handleTagClick}
+        >
+          #{post.tag}
+        </span>
+      </p> */}
+      {session &&
+        session?.user &&
+        session?.user?.email === post.creator.email &&
+        endingPathname === "profile" && (
+          <div className="w-full flex justify-between">
+            <div className="flex w-full py-2 justify-between">
+              <button className="px-2 py-1 bg-slate-300 rounded-lg hover:bg-slate-400/60 duration-100 transition-all ease active:scale-95" onClick={handleEdit}>
+                Edit
+              </button>
+              <button className="px-2 py-1 bg-slate-300 rounded-lg hover:bg-slate-400/60 duration-100 transition-all ease active:scale-95" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        )}
     </div>
   );
 };

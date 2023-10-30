@@ -1,9 +1,10 @@
-import { ReactNode } from "react"
+import { ReactNode, Suspense } from "react"
 import '@/styles/globals.css';
 import { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Provider from "@/components/Provider";
 import { Toaster } from "react-hot-toast";
+import Loading from "@/components/Loading";
 
 export const metadata: Metadata= {
     title: "Quotopia",
@@ -17,11 +18,12 @@ export default function RootLayout({children}: {children: ReactNode}) {
         <Provider>
           <div className="main"></div>
           <div className="gradient" />
-
           <main className="app">
             <Toaster />
-            <Nav />
-            {children}
+            <Suspense fallback={<Loading />}>
+              <Nav />
+              {children}
+            </Suspense>
           </main>
         </Provider>
       </body>
