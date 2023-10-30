@@ -5,7 +5,7 @@ import QuoteCard from './QuoteCard';
 import axios from 'axios';
 
 type Props = {
-  data : [any] | [] | never[]; // FIXME: type
+  data : [any] | [] // FIXME: type
   handleTagClick: (tag: string) => void;
 }
 
@@ -34,8 +34,7 @@ const Feed = () => {
     // fetch quotes from the server
     const fetchPosts = async () => {
       const response = await axios.get('/api/quote')
-      const data = response.data;
-      setData(data);
+      setData(response.data);
     }
 
     fetchPosts();

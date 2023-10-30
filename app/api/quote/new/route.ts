@@ -1,11 +1,12 @@
 import { connectToDb } from '@/utils/db'; // import db connection
 import { createQuoteValidationSchema } from "@/types/CreateQuote";
+import { getServerSession } from 'next-auth';
 import Quote from "@/models/quote";
+// import { authOptions } from '../../auth/[...nextauth]/route';
 
-export const POST = async (request) => {
+export const POST = async (req:Request) => {
     try {
-        const body = await request.json();
-        
+        const body = await req.json();
         const parsedBody = await createQuoteValidationSchema.parseAsync(body);
         const {userId, author, quote, tag} = parsedBody;
         await connectToDb();
