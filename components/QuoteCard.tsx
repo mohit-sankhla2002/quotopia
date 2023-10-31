@@ -22,9 +22,14 @@ const QuoteCard = ({
   const pathname = usePathname();
   const endingPathname = pathname.split("/")[pathname.split("/").length - 1];
   const [copied, setCopied] = useState<String | Boolean>("");
+  const router = useRouter();
   const handleCopy: React.MouseEventHandler<HTMLDivElement> = async (e) => {
     setCopied(post.quote);
-    await navigator.clipboard.writeText(post.quote);
+    toast.promise(navigator.clipboard.writeText(post.quote), {
+      success: "Copied to clipboard", 
+      loading: "Copying...",
+      error: "Something went wrong",
+    });
     setTimeout(() => setCopied(false), 3000);
   }
 
@@ -53,7 +58,7 @@ const QuoteCard = ({
   }
 
   const handleEdit = () => {
-    console.log(post._id);
+    router.push("/edit/" + post._id);
   }
 
   if (status === 'loading') {

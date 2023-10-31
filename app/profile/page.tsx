@@ -13,7 +13,7 @@ export default function Profile() {
   useEffect(() => {
     const setQuotes = async () => {
       try {
-        const response = await axios.get(`/api/quote/${session?.user?.id}`); // how to get rid of this red squiggly?
+        const response = await axios.get(`/api/users/${session?.user?.id}/posts`); // how to get rid of this red squiggly?
         // console.log(response);
         if (response.status === 200) {
           setData(response.data);
@@ -34,7 +34,7 @@ export default function Profile() {
     <section className='w-full max-w-full flex flex-col flex-start'>
       <ProfileCard />
       <div className='flex gap-4 mt-10 flex-wrap items-start'>
-        {data.map((quote) => (<QuoteCard post={quote} key={quote._id} handleTagClick={() => {}}  setPosts={setData} />))}
+        {data.map((quote, index) => (<QuoteCard post={quote} key={index} setPosts={setData} />))}
       </div>
     </section>
   )
