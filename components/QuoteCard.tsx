@@ -9,13 +9,13 @@ import toast from "react-hot-toast";
 
 type Props = {
   post: any; // FIXME: type
-  handleTagClick: React.MouseEventHandler<HTMLParagraphElement>
+  // handleTagClick: React.MouseEventHandler<HTMLParagraphElement>
   setPosts: any
 };
 
 const QuoteCard = ({
   post,
-  handleTagClick,
+  // handleTagClick,
   setPosts,
 }: Props) => {
   const { data : session, status } = useSession();
