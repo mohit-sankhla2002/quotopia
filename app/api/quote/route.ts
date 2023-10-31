@@ -5,7 +5,7 @@ export const GET = async (request: Request) => {
     try {
         await connectToDb();
         const searchTerm = request.url.split('?')[1]?.split("=")[1];
-        console.log(searchTerm);
+        // console.log(searchTerm);
         if (!searchTerm) {
             const quotes = await Quote.find({}).populate('creator').limit(10);
             const response= new Response(JSON.stringify(quotes), {
